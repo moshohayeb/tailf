@@ -25,6 +25,7 @@ var tailf = function (file, online, onerror) {
     nbyte = fs.readSync(fd, buffer, 0, BUFLEN, offset)
     offset += nbyte;
 
+    console.log(buffer.length)
     data = buffer.toString('utf8', 0, nbyte)
     ws.write(data)
   })
