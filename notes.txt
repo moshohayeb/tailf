@@ -1,0 +1,9 @@
+line 268       , Game begins
+line 269 - 308 , Creating players entities
+line 309 - 725 , Creating card entities
+line 726 - x   , Start of Mulligan
+    From here 
+
+
+TAG_CHANGE Entity=Fissure tag=TIMEOUT value=75
+    can be used to track timeout
