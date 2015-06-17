@@ -4,7 +4,7 @@ var split = require('split')
 
 var BUFLEN = 8192
 
-var tailf = function (file, online, onerror) {
+var tailf = function (file, opts, online, onerror) {
   var ws     = split()
   var buffer = new Buffer(BUFLEN)
   var fd     = fs.openSync(file, 'r+')
@@ -16,19 +16,31 @@ var tailf = function (file, online, onerror) {
     ws.on('error', onerror)
   }
 
-  watched = fs.watch(file)
-  watched.on('change', function (event, fname) {
-    if (event !== 'change') return
-    var data
-    var nbyte
+  function setup() {
+    watched = fs.watch(file)
+    watched.on('change', function (event, fname) {
+      if (event !== 'change') return
+      var data
+      var nbyte
 
-    nbyte = fs.readSync(fd, buffer, 0, BUFLEN, offset)
-    offset += nbyte;
+      nbyte = fs.readSync(fd, buffer, 0, BUFLEN, offset)
+      offset += nbyte;
 
-    console.log(buffer.length)
-    data = buffer.toString('utf8', 0, nbyte)
-    ws.write(data)
-  })
+      console.log(buffer.length)
+      data = buffer.toString('utf8', 0, nbyte)
+      ws.write(data)
+    })
+  }
+
+  if (opts.whole) {
+    var rs = fs.createReadStream(file)
+    rs
+      .pipe(ws)
+      .on('end', setup)
+      .on('error', function (error) { console.error('received error:', error) })
+  } else {
+    setup()
+  }
 }
 
 module.exports = tailf

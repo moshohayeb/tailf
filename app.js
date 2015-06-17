@@ -1,10 +1,11 @@
-var tailf = require('./')
-var path = require('path')
+var tailf       = require('./')
+var path        = require('path')
+var Hearthstone = require('./hearthstone')
 
-var path = path.join(process.env.HOME, 'Library', 'Logs', 'Unity', 'Player.log');
+//LOG = path.join(process.env.HOME, 'Library', 'Logs', 'Unity', 'Player.log');
+LOG = './log.txt'
+hs  = new Hearthstone
 
-tailf(path, function (line) {
-  //console.log('XX: ', line)
-}, function (err) {
-  console.log('ERROR: ', err)
+tailf(LOG, { whole: true }, function (line) {
+  hs.emit('line', line)
 })
