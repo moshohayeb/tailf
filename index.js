@@ -11,6 +11,8 @@ var tailf = function (file, opts, online, onerror) {
   var offset = fs.statSync(file).size
   var watched
 
+  opts = opts || {}
+
   ws.on('data', online)
   if (_.isFunction(onerror)) {
     ws.on('error', onerror)
@@ -26,13 +28,12 @@ var tailf = function (file, opts, online, onerror) {
       nbyte = fs.readSync(fd, buffer, 0, BUFLEN, offset)
       offset += nbyte;
 
-      console.log(buffer.length)
       data = buffer.toString('utf8', 0, nbyte)
       ws.write(data)
     })
   }
 
-  if (opts.whole) {
+  if (opts.fromStart) {
     var rs = fs.createReadStream(file)
     rs
       .pipe(ws)
