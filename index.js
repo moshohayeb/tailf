@@ -18,7 +18,7 @@ var tailf = function (file, opts, online, onerror) {
     ws.on('error', onerror)
   }
 
-  function setup() {
+  function watchman() {
     watched = fs.watch(file)
     watched.on('change', function (event, fname) {
       if (event !== 'change') return
@@ -35,12 +35,12 @@ var tailf = function (file, opts, online, onerror) {
 
   if (opts.fromStart) {
     var rs = fs.createReadStream(file)
-    rs
-      .pipe(ws)
-      .on('end', setup)
-      .on('error', function (error) { console.error('received error:', error) })
+    rs.pipe(ws, { end: false })
+    rs.on('end', watchman)
+    rs.on('error', function (error) { console.error('received error:', error) })
+
   } else {
-    setup()
+    watchman()
   }
 }
 
